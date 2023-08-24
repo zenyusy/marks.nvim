@@ -12,7 +12,7 @@ function M.set()
   end
 
   if utils.is_valid_mark(input) then
-    if not M.excluded_fts[vim.bo.ft] then
+    if M.included_fts[vim.bo.ft] then
       M.mark_state:place_mark_cursor(input)
     end
     vim.cmd("normal! m" .. input)
@@ -20,13 +20,13 @@ function M.set()
 end
 
 function M.set_next()
-  if not M.excluded_fts[vim.bo.ft] then
+  if M.included_fts[vim.bo.ft] then
     M.mark_state:place_next_mark_cursor()
   end
 end
 
 function M.toggle()
-  if not M.excluded_fts[vim.bo.ft] then
+  if M.included_fts[vim.bo.ft] then
     M.mark_state:toggle_mark_cursor()
   end
 end
@@ -70,7 +70,7 @@ function M.annotate()
 end
 
 function M.refresh(force_reregister)
-  if M.excluded_fts[vim.bo.ft] then
+  if not M.included_fts[vim.bo.ft] then
     return
   end
 
@@ -212,12 +212,12 @@ function M.setup(config)
     end
   end
 
-  local excluded_fts = {}
-  for _, ft in ipairs(config.excluded_filetypes or {}) do
-    excluded_fts[ft] = true
+  local included_fts = {}
+  for _, ft in ipairs(config.included_filetypes or {}) do
+    included_fts[ft] = true
   end
 
-  M.excluded_fts = excluded_fts
+  M.included_fts = included_fts
 
   M.bookmark_state.opt.signs = true
   M.bookmark_state.opt.buf_signs = {}
